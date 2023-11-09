@@ -18,9 +18,9 @@ clock = pygame.time.Clock()
 rend = Renderer(screen)
 
 # Inicialmente, establecemos el shader "rainbow" al inicio
-rend.setShader(vertexShader=rainbow_vertex_shader, fragmentShader=rainbow_fragment_shader)
+rend.setShader(vertexShader=general_vertex_shader, fragmentShader=rainbow_fragment_shader)
 
-model = Model("modelos/cala.obj")
+model = Model("modelos/carro.obj")
 model.loadTexture("texturas/ola.bmp")
 model.position.z = -5.5
 model.scale = glm.vec3(2, 2, 2)
@@ -43,19 +43,23 @@ while isRunning:
             if event.key == pygame.K_ESCAPE:
                 isRunning = False
 
-            # Cambia el shader al presionar teclas 1, 2 o 3
+            # Cambia el shader al presionar teclas 1, 2, 3 o 4
             if event.key == pygame.K_1:
                 if current_shader != 1:
-                    rend.setShader(vertexShader=rainbow_vertex_shader, fragmentShader=rainbow_fragment_shader)
+                    rend.setShader(vertexShader=general_vertex_shader, fragmentShader=rainbow_fragment_shader)
                     current_shader = 1
             elif event.key == pygame.K_2:
                 if current_shader != 2:
-                    rend.setShader(vertexShader=grid_vertex_shader, fragmentShader=grid_fragment_shader)
+                    rend.setShader(vertexShader=general_vertex_shader, fragmentShader=grid_fragment_shader)
                     current_shader = 2
             elif event.key == pygame.K_3:
                 if current_shader != 3:
-                    rend.setShader(vertexShader=waves_vertex_shader, fragmentShader=waves_fragment_shader)
+                    rend.setShader(vertexShader=general_vertex_shader, fragmentShader=waves_fragment_shader)
                     current_shader = 3
+            elif event.key == pygame.K_4:
+                if current_shader != 4:
+                    rend.setShader(vertexShader=general_vertex_shader, fragmentShader=last_fragment_shader)
+                    current_shader = 4
 
     if keys[K_d]:
         rend.camPosition.x -= 5 * deltaTime
@@ -70,7 +74,7 @@ while isRunning:
     if keys[K_e]:
         rend.camPosition.z += 5 * deltaTime
 
-    if rend.activeShader == waves_vertex_shader:
+    if rend.activeShader == general_vertex_shader:
         glUniform1f(glGetUniformLocation(rend.activeShader, "time"), rend.elapsedTime)
 
     rend.elapsedTime += deltaTime

@@ -36,8 +36,7 @@ void main()
 }
 '''
 
-# --------------------------------------------- Shader 1: Arcoiris -------------------------------------------
-rainbow_vertex_shader = '''
+general_vertex_shader = '''
 #version 450 core
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 texCoords;
@@ -59,6 +58,7 @@ void main()
 }
 '''
 
+# --------------------------------------------- Shader 1: Arcoiris -------------------------------------------
 rainbow_fragment_shader = '''
 #version 450 core
 
@@ -82,29 +82,7 @@ void main()
 # --------------------------------------------------------------------------------------------------------------
 
 
-# ------------------------------------------- Shader 2: Cuadrícula -------------------------------------------
-grid_vertex_shader = '''
-#version 450 core
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 texCoords;
-
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 projectionMatrix;
-
-uniform float time;
-
-out vec2 uvs;
-
-void main()
-{
-    vec4 newPos = vec4(position.x, position.y + sin(time) / 4.0, position.z, 1.0);
-
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(newPos);
-    uvs = texCoords;
-}
-'''
-
+# ------------------------------------------- Shader 2: Cuadrícula ---------------------------------------------
 grid_fragment_shader = '''
 #version 450 core
 in vec2 uvs;
@@ -136,28 +114,6 @@ void main()
 
 
 # --------------------------------------------- Shader 3: Ondas/Olas -----------------------------------------
-waves_vertex_shader = '''
-#version 450 core
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 texCoords;
-
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 projectionMatrix;
-
-uniform float time;
-
-out vec2 uvs;
-
-void main()
-{
-    vec4 newPos = vec4(position.x, position.y + sin(time) / 4.0, position.z, 1.0);
-
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(newPos);
-    uvs = texCoords;
-}
-'''
-
 waves_fragment_shader = '''
 #version 450 core
 
@@ -182,5 +138,43 @@ void main()
 # -----------------------------------------------------------------------------------------------------------
 
 
+# ------------------------------------------- Shader 4: Combinación -----------------------------------------
+last_fragment_shader = '''
+#version 450 core
 
+uniform float time;
+uniform sampler2D tex;
+
+in vec2 uvs;
+out vec4 fragmentColor;
+
+void main()
+{
+    int gridSize = 30;  
+    vec2 gridUV = floor(uvs * float(gridSize));
+    
+    float lineThickness = 0.1;  
+
+    float horizontalLine = step(mod(uvs.y * gridSize, 1.0), lineThickness);
+    float verticalLine = step(mod(uvs.x * gridSize, 1.0), lineThickness);
+
+    vec3 rainbowColor = vec3(
+        0.5 * (1.0 + sin(uvs.x * 3.14159265 * 2.0 + time)),
+        0.5 * (1.0 + sin(uvs.x * 3.14159265 * 2.0 + time + 2.094)),
+        0.5 * (1.0 + sin(uvs.x * 3.14159265 * 2.0 + time + 4.188))
+    );
+
+    if (mod(int(gridUV.x) + int(gridUV.y), 2) == 0) {
+        fragmentColor = vec4(rainbowColor, 1.0);  
+    } else {
+        fragmentColor = vec4(rainbowColor * 0.5, 1.0);  
+    }
+
+    if (horizontalLine > 0.0 || verticalLine > 0.0) {
+        fragmentColor = vec4(0.0, 0.0, 0.0, 1.0);  
+    }
+}
+
+'''
+# -----------------------------------------------------------------------------------------------------------
 
