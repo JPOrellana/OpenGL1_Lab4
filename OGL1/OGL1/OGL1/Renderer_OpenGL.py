@@ -20,8 +20,8 @@ rend = Renderer(screen)
 # Inicialmente, establecemos el shader "rainbow" al inicio
 rend.setShader(vertexShader=general_vertex_shader, fragmentShader=rainbow_fragment_shader)
 
-model = Model("modelos/carro.obj")
-model.loadTexture("texturas/ola.bmp")
+model = Model("modelos/nave.obj")
+model.loadTexture("texturas/lavita.jpg")
 model.position.z = -5.5
 model.scale = glm.vec3(2, 2, 2)
 model.rotation.x = 45
@@ -60,7 +60,7 @@ while isRunning:
                 if current_shader != 4:
                     rend.setShader(vertexShader=general_vertex_shader, fragmentShader=last_fragment_shader)
                     current_shader = 4
-
+            
     if keys[K_d]:
         rend.camPosition.x -= 5 * deltaTime
     if keys[K_a]:
